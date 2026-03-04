@@ -89,16 +89,23 @@ The automated workflow consists of 5 nodes:
 ## 📸 Screenshots
 
 ### Wazuh Dashboard — Mimikatz Alert Detected
-![Wazuh Alert](screenshots/21-wazuh-mimikatz-alert_1.png)
+![Wazuh Alert](screenshots/21-wazuh-mimikatz-alert_4.png)
+![Wazuh Alert](screenshots/21-wazuh-mimikatz-alert_5.png)
+![Wazuh Alert](screenshots/21-wazuh-mimikatz-alert_6.png)
 
 ### Shuffle SOAR — Automated Workflow Execution
 ![Shuffle Execution](screenshots/22-shuffle-execution-success_1.png)
+![Shuffle Execution](screenshots/22-shuffle-execution-success_2.png)
+![Shuffle Execution](screenshots/22-shuffle-execution-success_3.png)
+![Shuffle Execution](screenshots/22-shuffle-execution-success_4.png)
+![Shuffle Execution](screenshots/22-shuffle-execution-success_5.png)
 
 ### TheHive — Case Created Automatically
 ![TheHive Case](screenshots/23-thehive-case-created.png)
 
 ### Email Alert — SOC Analyst Notification
 ![Email Alert](screenshots/24-email-alert-received.png)
+
 
 ---
 
@@ -175,7 +182,7 @@ SOC-Automation-Lab/
 
 ## 👤 Author
 
-**Ojas Yewale**
+**Ojas Yajnik**
 Cybersecurity enthusiast building hands-on security labs
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://www.linkedin.com/in/ojasyajnik)
