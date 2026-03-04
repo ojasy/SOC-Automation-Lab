@@ -42,6 +42,9 @@ All VMs run on VMware Workstation using NAT networking — fully isolated from e
 ---
 
 ## 🗺️ Network Architecture Diagram
+```
+replace \n with <br/>
+
 ```mermaid
 flowchart TD
     subgraph ENDPOINT["🖥️ WINDOWS 10 ENDPOINT - 192.168.239.x"]
@@ -122,6 +125,7 @@ flowchart TD
     style F1 fill:#2d6a4f,stroke:#fff,color:#fff
     style F2 fill:#2d6a4f,stroke:#fff,color:#fff
     style F3 fill:#2d6a4f,stroke:#fff,color:#fff
+```
 ```
 
 ## 🛠️ Technologies Used
