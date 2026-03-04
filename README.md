@@ -42,60 +42,60 @@ All VMs run on VMware Workstation using NAT networking — fully isolated from e
 ---
 
 ## 🗺️ Network Architecture Diagram
-```
-mermaid
+```mermaid
 flowchart TD
     subgraph ENDPOINT["🖥️ WINDOWS 10 ENDPOINT - 192.168.239.x"]
-        A1[👤 Analyst runs\nMimikatz.exe]
-        A2[🔍 Sysmon monitors\nProcess Creation]
-        A3[📝 Event ID 1\nOriginalFileName captured]
+        A1[👤 Analyst runs Mimikatz.exe]
+        A2[🔍 Sysmon monitors Process Creation]
+        A3[📝 Event ID 1 - OriginalFileName captured]
         A1 --> A2 --> A3
     end
 
     subgraph SIEM["🛡️ WAZUH SIEM - 192.168.239.10"]
-        B1[📥 Wazuh Agent\nReceives Sysmon Log]
-        B2{⚠️ Rule 100002\nLevel 15 Match?}
-        B3[🚨 CRITICAL ALERT\nMimikatz Detected!]
-        B4[📤 Send to\nShuffle Webhook]
+        B1[📥 Wazuh Agent Receives Sysmon Log]
+        B2{⚠️ Rule 100002 Level 15 Match?}
+        B3[🚨 CRITICAL ALERT - Mimikatz Detected!]
+        B4[📤 Send to Shuffle Webhook]
+        B5[✅ Log only - normal process]
         B1 --> B2
         B2 -->|YES - mimikatz.exe| B3
         B3 --> B4
-        B2 -->|NO - normal process| B5[✅ Log only]
+        B2 -->|NO| B5
     end
 
     subgraph SOAR["⚡ SHUFFLE SOAR - shuffler.io"]
-        C1[🎣 Webhook\nReceives Alert]
-        C2[🔢 SHA256 Extractor\nRegex Parser]
-        C3[⏱️ Delay Node\n5 seconds]
+        C1[🎣 Webhook Receives Alert]
+        C2[🔢 SHA256 Extractor - Regex Parser]
+        C3[⏱️ Delay Node - 5 seconds]
         C1 --> C2 --> C3
     end
 
     subgraph THREAT["🦠 THREAT INTELLIGENCE"]
-        D1[🔬 VirusTotal API\n70+ AV Engines]
-        D2[📊 Malicious Score\nDetection Report]
+        D1[🔬 VirusTotal API - 70+ AV Engines]
+        D2[📊 Malicious Score + Detection Report]
         D1 --> D2
     end
 
     subgraph CASE["🐝 THEHIVE - 192.168.239.20"]
-        E1[📋 Create Alert\nSOC-Lab Organization]
-        E2[🏷️ Tags: mimikatz\nT1003 MITRE ATT&CK]
-        E3[📁 Case Status: NEW\nSeverity: MEDIUM]
+        E1[📋 Create Alert - SOC-Lab Organization]
+        E2[🏷️ Tags: mimikatz - T1003 MITRE ATT&CK]
+        E3[📁 Case Status: NEW - Severity: MEDIUM]
         E1 --> E2 --> E3
     end
 
     subgraph ANALYST["👨‍💻 SOC ANALYST RESPONSE"]
-        F1[📧 Email Alert\nReceived]
-        F2[🔎 Investigate\nTheHive Case]
-        F3[✅ Incident\nResolved]
+        F1[📧 Email Alert Received]
+        F2[🔎 Investigate TheHive Case]
+        F3[✅ Incident Resolved]
         F1 --> F2 --> F3
     end
 
-    A3 -->|"Sysmon Log via\nWazuh Agent"| B1
-    B4 -->|"JSON Payload\nLevel 15 Alert"| C1
-    C3 -->|"SHA256 Hash\n61C0810A..."| D1
-    D2 -->|"Malicious Count\n+ File Report"| E1
-    D2 -->|"Alert Details\n+ VT Results"| F1
-    E3 -->|"Case Created\nfor Review"| F2
+    A3 -->|Sysmon Log via Wazuh Agent| B1
+    B4 -->|JSON Payload - Level 15 Alert| C1
+    C3 -->|SHA256 Hash - 61C0810A...| D1
+    D2 -->|Malicious Count + File Report| E1
+    D2 -->|Alert Details + VT Results| F1
+    E3 -->|Case Created for Review| F2
 
     style ENDPOINT fill:#1a1a2e,stroke:#e94560,stroke-width:2px,color:#fff
     style SIEM fill:#16213e,stroke:#0f3460,stroke-width:2px,color:#fff
@@ -103,13 +103,12 @@ flowchart TD
     style THREAT fill:#533483,stroke:#e94560,stroke-width:2px,color:#fff
     style CASE fill:#1a1a2e,stroke:#e94560,stroke-width:2px,color:#fff
     style ANALYST fill:#16213e,stroke:#00b4d8,stroke-width:2px,color:#fff
-
     style A1 fill:#e94560,stroke:#fff,color:#fff
     style A2 fill:#e94560,stroke:#fff,color:#fff
     style A3 fill:#e94560,stroke:#fff,color:#fff
     style B1 fill:#0f3460,stroke:#fff,color:#fff
     style B2 fill:#ff6b35,stroke:#fff,color:#fff
-    style B3 fill:#e94560,stroke:#fff,color:#fff,font-weight:bold
+    style B3 fill:#e94560,stroke:#fff,color:#fff
     style B4 fill:#0f3460,stroke:#fff,color:#fff
     style B5 fill:#2d6a4f,stroke:#fff,color:#fff
     style C1 fill:#533483,stroke:#fff,color:#fff
