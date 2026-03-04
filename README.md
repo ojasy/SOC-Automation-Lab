@@ -1,2 +1,396 @@
-# SOC-Automation-Lab
-Automated SOC workflow detecting Mimikatz using Wazuh SIEM, TheHive case management, and Shuffle SOAR automation.
+\# 🛡️ SOC Automation Lab
+
+
+
+> Automated Security Operations Center pipeline detecting Mimikatz credential dumping attacks using enterprise-grade security tools.
+
+
+
+!\[Wazuh](https://img.shields.io/badge/Wazuh-SIEM-blue) !\[Shuffle](https://img.shields.io/badge/Shuffle-SOAR-orange) !\[TheHive](https://img.shields.io/badge/TheHive-Case%20Management-yellow) !\[VirusTotal](https://img.shields.io/badge/VirusTotal-Threat%20Intel-green)
+
+
+
+---
+
+
+
+\## 📋 Project Overview
+
+
+
+This lab simulates a real-world SOC environment where a Mimikatz attack on a Windows endpoint is automatically detected, analyzed, escalated, and reported — with zero manual intervention.
+
+
+
+\*\*Attack simulated:\*\* Mimikatz credential dumping (MITRE ATT\&CK T1003)
+
+
+
+\*\*Full pipeline:\*\*
+
+```
+
+Windows 10 Endpoint
+
+&nbsp;      ↓ (Sysmon logs)
+
+&nbsp; Wazuh SIEM
+
+&nbsp;      ↓ (Rule 100002 fires at Level 15)
+
+&nbsp; Shuffle SOAR
+
+&nbsp;      ↓
+
+&nbsp; SHA256 Hash Extraction
+
+&nbsp;      ↓
+
+&nbsp; VirusTotal API Lookup
+
+&nbsp;      ↓
+
+&nbsp; TheHive Case Creation
+
+&nbsp;      ↓
+
+&nbsp; Email Alert to SOC Analyst
+
+```
+
+
+
+---
+
+
+
+\## 🏗️ Architecture
+
+
+
+| Component | Role | IP |
+
+|---|---|---|
+
+| Wazuh Server | SIEM + Detection Engine | 192.168.239.10 |
+
+| TheHive Server | Case Management | 192.168.239.20 |
+
+| Windows 10 Client | Attack Target / Endpoint | 192.168.239.x |
+
+
+
+All VMs run on VMware Workstation using NAT networking — fully isolated from external networks.
+
+
+
+---
+
+
+
+\## 🛠️ Technologies Used
+
+
+
+\- \*\*Wazuh 4.7\*\* — Open source SIEM for log ingestion, detection and alerting
+
+\- \*\*Shuffle SOAR\*\* — Security automation and orchestration platform
+
+\- \*\*TheHive 5.2\*\* — Security incident response and case management
+
+\- \*\*VirusTotal API\*\* — Threat intelligence and malware hash lookup
+
+\- \*\*Sysmon\*\* — Windows system monitoring with SwiftOnSecurity config
+
+\- \*\*Mimikatz\*\* — Credential dumping tool used for attack simulation
+
+\- \*\*VMware Workstation\*\* — Hypervisor for isolated lab environment
+
+
+
+---
+
+
+
+\## 🔍 Detection Logic
+
+
+
+\### Custom Wazuh Rule (Rule ID: 100002)
+
+```xml
+
+<rule id="100002" level="15">
+
+&nbsp; <if\_group>sysmon\_event1</if\_group>
+
+&nbsp; <field name="win.eventdata.originalFileName" type="pcre2">(?i)mimikatz\\.exe</field>
+
+&nbsp; <description>Mimikatz Usage Detected on $(win.system.computer)</description>
+
+&nbsp; <mitre>
+
+&nbsp;   <id>T1003</id>
+
+&nbsp; </mitre>
+
+</rule>
+
+```
+
+
+
+\- Triggers on \*\*Sysmon Event ID 1\*\* (Process Creation)
+
+\- Detects Mimikatz via `originalFileName` field — catches renamed executables
+
+\- Fires at \*\*Level 15\*\* (Critical) — highest Wazuh severity
+
+\- Maps to \*\*MITRE ATT\&CK T1003\*\* — OS Credential Dumping
+
+
+
+---
+
+
+
+\## ⚡ Shuffle SOAR Workflow
+
+
+
+The automated workflow consists of 5 nodes:
+
+
+
+1\. \*\*Webhook\*\* — Receives Level 15 alerts from Wazuh
+
+2\. \*\*SHA256 Extractor\*\* — Extracts file hash using regex
+
+3\. \*\*VirusTotal\*\* — Queries hash against 70+ antivirus engines
+
+4\. \*\*TheHive\*\* — Creates structured incident alert automatically
+
+5\. \*\*Email\*\* — Sends formatted alert to SOC analyst
+
+
+
+---
+
+
+
+\## 📸 Screenshots
+
+
+
+\### Wazuh Dashboard — Mimikatz Alert Detected
+
+!\[Wazuh Alert](screenshots/21-wazuh-mimikatz-alert\_4.png)
+
+!\[Wazuh Alert](screenshots/21-wazuh-mimikatz-alert\_5.png)
+
+!\[Wazuh Alert](screenshots/21-wazuh-mimikatz-alert\_6.png)
+
+
+
+\### Shuffle SOAR — Automated Workflow Execution
+
+!\[Shuffle Execution](screenshots/22-shuffle-execution-success\_1.png)
+
+!\[Shuffle Execution](screenshots/22-shuffle-execution-success\_2.png)
+
+!\[Shuffle Execution](screenshots/22-shuffle-execution-success\_3.png)
+
+!\[Shuffle Execution](screenshots/22-shuffle-execution-success\_4.png)
+
+!\[Shuffle Execution](screenshots/22-shuffle-execution-success\_5.png)
+
+
+
+\### TheHive — Case Created Automatically
+
+!\[TheHive Case](screenshots/23-thehive-case-created.png)
+
+
+
+\### Email Alert — SOC Analyst Notification
+
+!\[Email Alert](screenshots/24-email-alert-received.png)
+
+
+
+---
+
+
+
+\## 🚀 How to Reproduce This Lab
+
+
+
+\### Prerequisites
+
+\- VMware Workstation (free trial works)
+
+\- 16GB RAM minimum on host machine
+
+\- Ubuntu 22.04 Server ISO
+
+\- Windows 10 ISO
+
+
+
+\### Step 1 — Deploy VMs
+
+Create three VMs on NAT network:
+
+\- Wazuh Server: Ubuntu 22.04, 4GB RAM, static IP
+
+\- TheHive Server: Ubuntu 22.04, 6GB RAM, static IP
+
+\- Windows 10 Client: 4GB RAM, DHCP
+
+
+
+\### Step 2 — Install Wazuh
+
+```bash
+
+curl -sO https://packages.wazuh.com/4.7/wazuh-install.sh
+
+sudo bash wazuh-install.sh -a --ignore-check
+
+```
+
+
+
+\### Step 3 — Install TheHive
+
+```bash
+
+sudo apt install docker.io -y
+
+sudo docker run -d --name thehive -p 9000:9000 strangebee/thehive:5.2.8
+
+```
+
+
+
+\### Step 4 — Configure Windows Endpoint
+
+\- Install Sysmon with SwiftOnSecurity config
+
+\- Install Wazuh Agent pointing to Wazuh Server IP
+
+\- Add Sysmon log ingestion to ossec.conf
+
+
+
+\### Step 5 — Add Custom Detection Rule
+
+Add Rule 100002 to `/var/ossec/etc/rules/local\_rules.xml`
+
+
+
+\### Step 6 — Build Shuffle Workflow
+
+\- Create free account at shuffler.io
+
+\- Import `scripts/SOC\_Automation\_Lab.json`
+
+\- Configure VirusTotal and TheHive API keys
+
+
+
+\### Step 7 — Test
+
+Run Mimikatz on Windows endpoint and watch the full pipeline execute automatically.
+
+
+
+---
+
+
+
+\## 📁 Repository Structure
+
+```
+
+SOC-Automation-Lab/
+
+├── configs/
+
+│   ├── ossec.conf          # Wazuh agent configuration
+
+│   └── local\_rules.xml     # Custom Mimikatz detection rule
+
+├── scripts/
+
+│   └── SOC\_Automation\_Lab.json  # Shuffle workflow export
+
+├── screenshots/            # Full lab documentation
+
+└── README.md
+
+```
+
+
+
+---
+
+
+
+\## 🎯 Skills Demonstrated
+
+
+
+\- SIEM deployment and configuration (Wazuh)
+
+\- SOAR automation and workflow building (Shuffle)
+
+\- Security case management (TheHive)
+
+\- Detection engineering and custom rule writing
+
+\- API integration (VirusTotal, TheHive)
+
+\- Linux server administration (Ubuntu 22.04)
+
+\- Windows endpoint security monitoring (Sysmon)
+
+\- MITRE ATT\&CK framework mapping
+
+\- Incident response pipeline automation
+
+\- Network architecture and VM management
+
+
+
+---
+
+
+
+\## 👤 Author
+
+
+
+\*\*Ojas Yewale\*\*
+
+Cybersecurity enthusiast building hands-on security labs
+
+
+
+\[!\[LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](www.linkedin.com/in/ojasyajnik)
+
+\[!\[GitHub](https://img.shields.io/badge/GitHub-Follow-black)](https://github.com/ojasy)
+
+
+
+---
+
+
+
+\## 📜 License
+
+
+
+MIT License — feel free to use this for your own learning.
+
