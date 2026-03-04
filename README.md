@@ -14,9 +14,9 @@ This lab simulates a real-world SOC environment where a Mimikatz attack on a Win
 
 **Full pipeline:**
 Windows 10 Endpoint
-↓ Sysmon logs
+↓ (Sysmon logs)
 Wazuh SIEM
-↓ Rule 100002 fires at Level 15
+↓ (Rule 100002 fires at Level 15)
 Shuffle SOAR
 ↓
 SHA256 Hash Extraction
@@ -40,6 +40,19 @@ Email Alert to SOC Analyst
 All VMs run on VMware Workstation using NAT networking — fully isolated from external networks.
 
 ---
+
+## 🗺️ Network Architecture Diagram
+```mermaid
+graph TD
+    A[🖥️ Windows 10 Client\n192.168.239.x] -->|Sysmon Process Creation Event| B[🔍 Wazuh SIEM\n192.168.239.10]
+    B -->|Rule 100002 Level 15 Alert| C[⚡ Shuffle SOAR\nshuffler.io]
+    C -->|Extract SHA256 Hash| D[🔬 SHA256 Extractor]
+    D -->|Hash Lookup| E[🦠 VirusTotal API]
+    E -->|Malware Report| F[🐝 TheHive\n192.168.239.20]
+    E -->|Alert Details| G[📧 Email Notification]
+    F -->|Case Created| H[👨‍💻 SOC Analyst]
+    G -->|Alert Sent| H
+```
 
 ## 🛠️ Technologies Used
 
@@ -154,16 +167,16 @@ Run Mimikatz on Windows endpoint and watch the full pipeline execute automatical
 ---
 
 ## 📁 Repository Structure
+```
 SOC-Automation-Lab/
 ├── configs/
-│   ├── ossec.conf              # Wazuh agent configuration
-│   └── local_rules.xml         # Custom Mimikatz detection rule
+│   ├── ossec.conf
+│   └── local_rules.xml
 ├── scripts/
-│   └── SOC_Automation_Lab.json # Shuffle workflow export
-├── screenshots/                # Full lab documentation
+│   └── SOC_Automation_Lab.json
+├── screenshots/
 └── README.md
-
----
+```
 
 ## 🎯 Skills Demonstrated
 
